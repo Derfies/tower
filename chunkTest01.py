@@ -2,57 +2,36 @@ import copy
 import random
 
 import pglib
+import tower
 from pglib.weights import SineWeight
 from pglib import Region, RandomRegions
 from nodeBoxApplication import NodeBoxApplication
 
 
-class Chunk( Region ):
 
-    def __init__( self, region, subChunks=None ):
-        self.region = region
-        
-        # Generate some sub chunks if we don't have any.
-        self.subChunks = subChunks
-        if self.subChunks is None:
-            self.subChunks = []
-            for i in range( random.randint( 0, 3 ) ):
-                self.subChunks.append( Region( 1, 1, 9, 9 ) )
-
-    def __copy__( self ):
-        return Chunk( copy.copy( self.region ), subChunks=[
-            copy.copy( subChunk )
-            for subChunk in self.subChunks
-        ] )
 
 
 class App( NodeBoxApplication ):
     
     def getDrawFunctions( self ):
 
-        chunks = []
-        for i in range( 7 ):
-
-            # Copy previous chunk if possible.
-            chunk = None#
-            if i < 1:
-                chunk = Chunk( Region( -15, 0, -5, 10 ) )
-            else:
-                chunk = copy.copy( chunks[-1] )
-
-            chunk.region.x1 += 15
-            chunk.region.x2 += 15
-            chunks.append( chunk )
+        t = tower.Tower( 5, 10, 10 )
+        t.generate()
 
         drawFns = []
-        for chunk in chunks:
+        offset = 5
+        for chunk in t.chunks:
+            outline = Region( offset, 5, offset + 10, 15 )
+            drawFns.append( self.regionToRect( outline, stroke=(0, 1, 0, 0.75), strokewidth=10 ) )
+
             colour = pglib.utils.getRandomColour( a=0.15 )
-            drawFns.append( self.regionToRect( chunk.region, fill=colour, stroke=(1, 0, 0, 0.75), strokewidth=1 ) )
-            for subChunk in chunk.subChunks:
-                reg = subChunk
-                reg.x1 += chunk.region.x1
-                reg.x2 += chunk.region.x1
-                drawFns.append( self.regionToRect( reg, fill=colour, stroke=(1, 0, 0, 0.75), strokewidth=3 ) )
+            for region in chunk.regions:
+                region.x1 += offset
+                region.x2 += offset
+                region.y1 += 5
+                region.y2 += 5
+                drawFns.append( self.regionToRect( region, fill=colour, stroke=(1, 0, 0, 0.75), strokewidth=2 ) )
+            offset += 15
         return drawFns
 
 
