@@ -15,14 +15,21 @@ class App( NodeBoxApplication ):
     
     def getDrawFunctions( self ):
 
-        t = tower.Tower( 5, 10, 10 )
+        t = tower.Tower( 4, 10, 10 )
         t.generate()
 
         drawFns = []
         offset = 5
         for chunk in t.chunks:
-            outline = Region( offset, 5, offset + 10, 15 )
-            drawFns.append( self.regionToRect( outline, stroke=(0, 1, 0, 0.75), strokewidth=10 ) )
+            #outline = Region( offset, 5, offset + 10, 15 )
+            #drawFns.append( self.regionToRect( outline, stroke=(0, 1, 0, 0.25), strokewidth=10 ) )
+
+            if chunk.notch is not None:
+                chunk.notch.x1 += offset
+                chunk.notch.x2 += offset
+                chunk.notch.y1 += 5
+                chunk.notch.y2 += 5
+                drawFns.append( self.regionToRect( chunk.notch, fill=(0, 0, 1, 0.3), stroke=(0, 0, 1, 0.75), strokewidth=4 ) )
 
             colour = pglib.utils.getRandomColour( a=0.15 )
             for region in chunk.regions:
@@ -30,7 +37,7 @@ class App( NodeBoxApplication ):
                 region.x2 += offset
                 region.y1 += 5
                 region.y2 += 5
-                drawFns.append( self.regionToRect( region, fill=colour, stroke=(1, 0, 0, 0.75), strokewidth=2 ) )
+                drawFns.append( self.regionToRect( region, fill=(0,0,0,0), stroke=(1, 0, 0, 0.75), strokewidth=2 ) )
             offset += 15
         return drawFns
 

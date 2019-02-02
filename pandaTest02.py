@@ -177,7 +177,7 @@ class MyApp( ShowBase ):
         #self.camArm.setHpr( 135, 0, 0 )    # k = 3: Camera rotation = 135
         #self.camArm.setHpr( 225, 0, 0 )    # k = 2: Camera rotation = 225
         #self.camArm.setHpr( 315, 0, 0 )    # k = 1: Camera rotation = 315
-        self.camArm.setPos( 0, 0, 8 )
+        self.camArm.setPos( 0, 0, 10 )
 
     def setupLights( self ):
         dlight = pm.DirectionalLight( 'dlight1' )
@@ -244,26 +244,30 @@ class MyApp( ShowBase ):
             chunk.removeNode()
         self.chunks = []
 
-        t = tower.Tower( 5, 10, 10 )
+        t = tower.Tower( 6, 10, 10 )
         t.generate()
 
         offset = 0
         for chunk in t.chunks:
+
+            height = random.randint( 2, 6 )
+
             for region in chunk.regions:
                 tile = pm.NodePath( p3d.geometry.Box() )
 
                 tile.setSx( region.width )
                 tile.setSy( region.height )
-
                 tile.setX( region.x1 + region.width / 2.0 - 5 )
                 tile.setY( region.y1 + region.height / 2.0 - 5 )
 
 
-                tile.setSz( 5 )
+                tile.setSz( height )
                 tile.setZ( offset + tile.getSz() / 2.0 )
+
                 tile.reparentTo( base.render )
                 self.chunks.append( tile )
-            offset += 5
+
+            offset += height
 
 
 
