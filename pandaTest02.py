@@ -163,7 +163,7 @@ class MyApp( ShowBase ):
 
     def setupCamera( self ):
         lens = pm.OrthographicLens()
-        lens.setFilmSize( 40, 30 )
+        lens.setFilmSize( 100, 70 )
         self.cam.node().setLens( lens )
 
         self.camArm = pm.NodePath( 'camArm' )
@@ -244,13 +244,13 @@ class MyApp( ShowBase ):
             chunk.removeNode()
         self.chunks = []
 
-        t = tower.Tower( 6, 10, 10 )
+        t = tower.Tower( 8, 10, 10 )
         t.generate()
 
         offset = 0
         for chunk in t.chunks:
 
-            height = random.randint( 2, 6 )
+            height = random.randint( 2, 3 )
 
             for region in chunk.regions:
                 tile = pm.NodePath( p3d.geometry.Box() )
